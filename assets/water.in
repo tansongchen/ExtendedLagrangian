@@ -1,0 +1,41 @@
+variable nvtstep equal 700
+variable nvestep equal 350
+
+variable dt equal 0.10
+variable XLMDFlag equal 3
+variable m equal 1100*${dt}*${dt}
+variable tau equal 1e5
+variable T equal 3e-3
+
+units real
+
+boundary p p p
+atom_style charge
+read_data assets/water.dat
+
+pair_style reax/c NULL safezone 1.6
+pair_coeff * * assets/water.field H O Cu Cl X
+
+neighbor 2.5 bin
+neigh_modify every 10 delay 0 check no
+
+fix 0 all property/atom d_qLatent d_pLatent d_fLatent ghost yes
+fix 1 all nvt temp 300.0 300.0 100 0 0.0 0.0 0.0
+fix 2 all qeq/reax 1 0.0 10.0 1e-8 reax/c 0
+fix 3 all temp/rescale 1 300 300 0.05 1.0
+
+timestep ${dt}
+
+run ${nvtstep} post no
+unfix 1
+unfix 2
+unfix 3
+
+reset_timestep 0
+
+fix 1 all nve ${XLMDFlag} ${m} ${tau} ${T}
+fix 2 all qeq/reax 1 0.0 10.0 1e-8 reax/c ${XLMDFlag}
+
+thermo 100
+
+run ${nvestep} pre yes

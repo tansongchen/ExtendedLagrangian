@@ -583,7 +583,7 @@ void FixQEqReax::calculate_XLMD() {
 
   // Force for Latent
   pack_flag = 1;
-  sparse_matvec( &H, atom->q, q, 0);
+  sparse_matvec( &H, atom->q, q );
   comm->reverse_comm_fix(this);
   for (ii = 0; ii < nn; ++ii) {
     i = ilist[ii];

@@ -141,15 +141,12 @@ void FixNVE::initial_integrate(int /*vflag*/)
 
   // Songchen: Evolve O(t) for BAOAB Scheme
 
-  if (update->ntimestep % atom->respaLatent == 0) {
-    double dto = dtv * atom->respaLatent;
-    if (atom->XLMDFlag == 2) {
-      if (update->ntimestep > 1000) {
-        Berendersen(dto);
-      }
-    } else if (atom->XLMDFlag == 3) {
-      Langevin(dto);
+  if (atom->XLMDFlag == 2) {
+    if (update->ntimestep > 1000) {
+      Berendersen(dtv);
     }
+  } else if (atom->XLMDFlag == 3) {
+    Langevin(dtv);
   }
 
   // Songchen: Evolve A(t/2)
